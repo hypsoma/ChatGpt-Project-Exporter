@@ -1,0 +1,28 @@
+name: Release Chrome Extension
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create ZIP archive
+        run: |
+          cd chrome_extension
+          zip -r ../chatgpt-project-exporter-${{ github.ref_name }}.zip . -x "*.git*" "*node_modules*" "*.DS_Store*"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: chatgpt-project-exporter-${{ github.ref_name }}.zip
+          generate_release_notes: true
